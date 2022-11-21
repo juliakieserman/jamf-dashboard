@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { GridColDef } from '@mui/x-data-grid';
-import { getUserAuth  } from './services/auth.service';
+import { getUserAuth  } from './api/auth';
 import Chip from '@mui/material/Chip';
 import Checkbox from '@mui/material/Checkbox';
 import * as React from 'react';
@@ -82,6 +82,7 @@ function prepareRows( computers: Computer[], softwareUpdates: string[] ) {
                 },
                 firewallEnabled: {
                     label: computer.security.firewall_enabled ? "ENABLED" : "NOT ENABLED",
+                    // TODO: https://mui.com/material-ui/customization/palette/#adding-new-colors
                     status: computer.security.firewall_enabled ? "success" : "error"
                 },
                 diskEncrypted: {
@@ -120,7 +121,7 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
                     <TableCell>
                         <Chip
                             variant="outlined"
-                            color={row.osVersion.status}
+                            color="error"
                             key={row.id}
                             label={row.osVersion.label}
                         />
@@ -128,7 +129,7 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
                     <TableCell>
                         <Chip
                             variant="outlined"
-                            color={row.firewallEnabled.status}
+                            color="error"
                             key={row.id}
                             label={row.firewallEnabled.label}
                         />
@@ -136,7 +137,7 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
                     <TableCell>
                         <Chip
                             variant="outlined"
-                            color={row.diskEncrypted.status}
+                            color="error"
                             key={row.id}
                             label={row.diskEncrypted.label}
                         />

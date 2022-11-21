@@ -11,8 +11,6 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Link from 'next/link';
-import { useState } from 'react';
-import AppContext from '../components/AppContext';
 
 const drawerWidth = 240;
 

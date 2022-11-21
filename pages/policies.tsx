@@ -1,4 +1,4 @@
-import { getUserAuth } from "./services/auth.service";
+import { getUserAuth } from "./api/auth";
 
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
