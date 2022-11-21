@@ -8,7 +8,6 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
-import { JamfItem } from "../types";
 
 export type Policy = {
     general: {
@@ -34,6 +33,11 @@ export type Policy = {
 
 type PolicyProps = {
     policies: Policy[]
+}
+
+type JamfItem = {
+    id: number,
+    name: string
 }
 
 export default function Policies( { policies }: PolicyProps ) {

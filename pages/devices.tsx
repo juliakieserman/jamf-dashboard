@@ -11,7 +11,6 @@ import { getUserAuth  } from './api/auth';
 import Chip from '@mui/material/Chip';
 import Checkbox from '@mui/material/Checkbox';
 import * as React from 'react';
-import { JamfItem } from '../types';
 
 export type Computer = {
     general: {
@@ -45,7 +44,11 @@ type LocalAccount = {
     uid: string
 }
 
-
+// TODO: consolidate this without borking pre-rendering?
+type JamfItem = {
+    id: number,
+    name: string
+}
 
 export type DeviceProps = {
     computers: Computer[]
