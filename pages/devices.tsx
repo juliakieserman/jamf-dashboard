@@ -1,54 +1,24 @@
-
-
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import { GridColDef } from '@mui/x-data-grid';
 import { getUserAuth  } from './api/auth';
-import Chip from '@mui/material/Chip';
-import Checkbox from '@mui/material/Checkbox';
-import * as React from 'react';
+import { 
+    Chip,
+    Checkbox,
+    Card,
+    CardContent,
+    Container,
+    Grid,
+    TableRow,
+    TableHead,
+    TableContainer,
+    TableCell,
+    TableBody,
+    Table
+} from '@mui/material';
+import { SimpleDialog } from '../components/SimpleDialog';
+import { Computer, JamfItem } from '../types/types';
+import React, { useState, useEffect } from 'react';
+import { Button } from '@mui/material';
 
-export type Computer = {
-    general: {
-        id: number,
-        name: string
-    },
-    hardware: {
-        os_version: string,
-        disk_encryption_configuration: string
-    },
-    security: {
-        activation_lock: boolean,
-        external_boot_level: string,
-        firewall_enabled: boolean,
-        recovery_lock_enabled: boolean,
-        secure_boot_level: string
-    },
-    groups_accounts: {
-        local_accounts: LocalAccount []
-    }
-}
-
-type LocalAccount = {
-    administrator: boolean,
-    filevault_enabled: boolean,
-    home: string,
-    home_size: string,
-    home_size_mb: number,
-    name: string,
-    realname: string,
-    uid: string
-}
-
-// TODO: consolidate this without borking pre-rendering?
-type JamfItem = {
-    id: number,
-    name: string
-}
 
 export type DeviceProps = {
     computers: Computer[]
@@ -102,9 +72,36 @@ function prepareRows( computers: Computer[], softwareUpdates: string[] ) {
   
 export default function Device( { computers, softwareUpdates }: DeviceProps ) {
     const rows = prepareRows( computers, softwareUpdates["availableUpdates"] );
+    console.log("COMPUTERS");
+    console.log(computers);
+    const [ selectedDevices, setSelectedDevices ] = useState<number[]>([]);
+    const [ open, setOpen] = useState(false);
+
+    const handleItemClick = ( row: number ) => {
+        if (!selectedDevices.includes(row)) {
+            setSelectedDevices(selectedDevices => [...selectedDevices, row]);
+        } else {
+            console.log("right spot?");
+            
+            setSelectedDevices( selectedDevices.splice( selectedDevices.indexOf(row), 1))
+        }
+        
+    }
+
+    const handleClose = (value: string) => {
+        setOpen(false);
+      };
+      const handleClickOpen = () => {
+        setOpen(true);
+      };
+
+    useEffect( () => {
+        console.log(selectedDevices);
+    }, [selectedDevices])
 
     return (
-     <TableContainer>
+    <Container>
+    <TableContainer>
         <Table>
         <TableHead>
             <TableRow>
@@ -117,7 +114,7 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
             {rows.map((row) => (
                 <TableRow key={row.id}>
                     <TableCell>
-                        <Checkbox />
+                        <Checkbox onClick={() => handleItemClick(row.id )}/>
                     </TableCell>
                     <TableCell> {row.id} </TableCell>
                     <TableCell> {row.name} </TableCell>
@@ -151,6 +148,24 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
         </TableBody>
         </Table>
       </TableContainer>
+      <br />
+      <h3> Device Details</h3>
+      <Grid>
+        {selectedDevices.map((index) => (
+            <Card key={index}>
+                <CardContent>
+                    { computers[index-1].general.name}
+                </CardContent>
+            </Card>       
+        ))}
+        <Button onClick={handleClickOpen}> Email Admin(s)</Button>
+        <SimpleDialog
+            open={open}
+            onClose={handleClose}
+      />
+      </Grid>
+    
+      </Container>
     );
 }
 
