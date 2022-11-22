@@ -72,17 +72,13 @@ function prepareRows( computers: Computer[], softwareUpdates: string[] ) {
   
 export default function Device( { computers, softwareUpdates }: DeviceProps ) {
     const rows = prepareRows( computers, softwareUpdates["availableUpdates"] );
-    console.log("COMPUTERS");
-    console.log(computers);
     const [ selectedDevices, setSelectedDevices ] = useState<number[]>([]);
     const [ open, setOpen] = useState(false);
 
     const handleItemClick = ( row: number ) => {
         if (!selectedDevices.includes(row)) {
             setSelectedDevices(selectedDevices => [...selectedDevices, row]);
-        } else {
-            console.log("right spot?");
-            
+        } else {            
             setSelectedDevices( selectedDevices.splice( selectedDevices.indexOf(row), 1))
         }
         
@@ -95,9 +91,7 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
         setOpen(true);
       };
 
-    useEffect( () => {
-        console.log(selectedDevices);
-    }, [selectedDevices])
+    useEffect( () => {}, [selectedDevices])
 
     return (
     <Container>

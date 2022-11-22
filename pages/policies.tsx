@@ -10,19 +10,45 @@ import {
     Typography,
     Chip
 } from '@mui/material';
-import useSwr from 'swr';
 import { Policy, JamfItem } from "../types/types";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const staticPolicies = [
+    {
+        name: 'SOC2',
+        description: 'AICPA standardized framework to prove a company’s security posture to prospective customers.'
+    },
+    {
+        name: 'GDPR',
+        description: 'European Union (EU) regulation to protect personal data and privacy of its citizens.'
+    },
+    {
+        name: 'HIPPA',
+        description: 'United States (US) regulation to secure Protected Health Information (PHI).'
+    },
+    {
+        name: 'CCPA',
+        description: 'California regulation that gives residents new data privacy rights.'
+    },
+    {
+        name: 'ISO 27701',
+        description: 'ISO 27701 is an extension of ISO 27001 that specifies the requirements for establishing, implementing, maintaining and continually improving a privacy information management system (PIMS).'
+    },
+    {
+        name: 'ISO 27018',
+        description: 'ISO 27018 establishes controls to protect Personally Identifiable Information (PII) in public cloud computing environments.'
+    },
+    {
+        name: 'Microsoft SSPA',
+        description: 'Microsoft SSPA is a mandatory compliance program for Microsoft suppliers working with Personal Data and/or Microsoft Confidential Data.'
+    }
+]
 
 type PolicyProps = {
     policies: Policy[]
 }
 
 export default function Policies( { policies }: PolicyProps ) {
-    const { data, error } = useSwr('/api/staticpolicies', fetcher);
-    console.log("DATA");
-    console.log(data);
     return (
         <div>
             <Grid container spacing={2}>
@@ -50,7 +76,7 @@ export default function Policies( { policies }: PolicyProps ) {
                         </Grid>
                     );
                 })}
-                { data.map((policy: any, index: number) => {
+                { staticPolicies.map((policy: any, index: number) => {
                     return (
                         <Grid key={index} item xs={3}>
                             <Card>
