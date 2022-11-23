@@ -41,7 +41,9 @@ export type LocalAccount = {
 export type Computer = {
     general: {
         id: number,
-        name: string
+        name: string,
+        last_contact_time: string,
+        platform: string,
     },
     hardware: {
         os_version: string,
@@ -56,5 +58,49 @@ export type Computer = {
     },
     groups_accounts: {
         local_accounts: LocalAccount []
+    },
+    location: {
+        email_address: string
+    },
+    purchasing: {
+        is_leased: boolean,
+        is_purchased: true
+    },
+    software: {
+        applications: string[]
     }
+}
+
+// TODO: this should be consolidated with Device most likely 
+export type DeviceRow = {
+    id: number,
+    name: string,
+    emailAddress: string,
+    osVersion: {
+        label: string,
+        status: string,
+        version: string
+    },
+    firewallEnabled: {
+        label: string,
+        status: string
+    },
+    diskEncrypted: {
+        label: string,
+        status: string
+    },
+    localAccounts: LocalAccount[],
+    applications: string[],
+    ownership: string,
+    isValid: boolean,
+    lastContactTime: string
+}
+
+export type DeviceProps = {
+    computers: Computer[]
+    softwareUpdates: { availableUpdates: string[] }
+}
+
+export type PolicyProps = {
+    policies: Policy[]
 }
