@@ -5,7 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import { DeviceRow, Computer } from '../types/types';
+import { DeviceRow, LocalAccount } from '../types/types';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -15,7 +15,7 @@ import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutli
 import ErrorOutlinedIcon from '@mui/icons-material/ErrorOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Collapse from '@mui/material/Collapse';
 
 
@@ -59,11 +59,25 @@ export default function DeviceDetailed( { computer }: DeviceDetailedProps ) {
     return <ErrorOutlinedIcon color="error"/>;
   }
 
-  const getClassName = (status: string) => {
-    if ( status === 'error' ) {
-      return styles[ status + '-text'];
+  // avoids type error from dynamic color-setting
+  function getIsValid(status: string, label: string) {
+    if ( status === 'success' ) {
+        return (
+            <Chip label={label} color="success"/>
+        )
     }
-    return '';
+    return (
+        <Chip label={label} color="error" />
+    )
+}
+
+  function getIsAdmin(account: LocalAccount) {
+    if ( account.administrator) {
+      return (
+        <Chip label="Admin" />
+      )
+    }
+    return null;
   }
 
   return (
@@ -83,14 +97,21 @@ export default function DeviceDetailed( { computer }: DeviceDetailedProps ) {
             <Typography variant="h5" component="div">
               { computer.name }
             </Typography>
-            <Chip label='Firewall' variant='outlined' className={styles.topBufferSmall} /> 
-            <Typography className={getClassName(computer.firewallEnabled.status)}>{computer.firewallEnabled.label}</Typography>
+            <Typography variant="subtitle1" className={styles.topBufferSmall}>
+              Firewall
+            </Typography>
+            {getIsValid(computer.firewallEnabled.status, computer.firewallEnabled.label)}
             <br />
-            <Chip label='Disk Encryption' variant='outlined' className={styles.topBufferSmall} /> 
-            <Typography className={getClassName(computer.diskEncrypted.status)}>{computer.diskEncrypted.label}</Typography>
+            <Typography variant="subtitle1" className={styles.topBufferSmall}>
+              Disk Encryption
+            </Typography>
+            {getIsValid(computer.diskEncrypted.status, computer.diskEncrypted.label)}
             <br />
-            <Chip label='OS version' variant='outlined' className={styles.topBufferSmall} /> 
-            <Typography className={getClassName(computer.osVersion.status)}>{computer.osVersion.label}</Typography>
+            <Typography variant="subtitle1" className={styles.topBufferSmall}>
+              OS Version
+            </Typography>
+            {getIsValid(computer.osVersion.status, computer.osVersion.label)}
+            <br />
               <Chip label={computer.ownership} className={styles.topBufferSmall} /> 
               <br />
               {computer.applications.length} running applications
@@ -98,6 +119,7 @@ export default function DeviceDetailed( { computer }: DeviceDetailedProps ) {
          
         <CardActions>
           <Button size="small">Manage</Button>
+          <br />
           <div className={styles.controls}>
             Accounts
             <ExpandMore
@@ -116,7 +138,9 @@ export default function DeviceDetailed( { computer }: DeviceDetailedProps ) {
                   <div key={index}>
                     <b> Name: </b> {account.name}
                     <br />
-                    <b> Is Admin: </b> {account.administrator}
+                    <b> UID: </b> {account.uid}
+                    <br />
+                    {getIsAdmin(account)}
                   <p> ---------------- </p>
                   </div>
             ))}

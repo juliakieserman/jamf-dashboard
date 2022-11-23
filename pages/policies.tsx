@@ -1,6 +1,5 @@
 import { getUserAuth } from "./api/auth";
 import styles from '../styles/Home.module.css'
-
 import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
@@ -11,58 +10,10 @@ import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import { Policy, JamfItem, PolicyProps, PolicyLite } from "../types/types";
 import Link from 'next/link';
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-
-const staticPolicies = [
-    {
-        name: 'SOC2',
-        description: 'AICPA standardized framework to prove a company’s security posture to prospective customers.',
-        status: false,
-        type: 'Health'
-    },
-    {
-        name: 'GDPR',
-        description: 'European Union (EU) regulation to protect personal data and privacy of its citizens.',
-        status: false,
-        type: 'General'
-    },
-    {
-        name: 'HIPPA',
-        description: 'United States (US) regulation to secure Protected Health Information (PHI).',
-        status: false,
-        type: 'Health'
-    },
-    {
-        name: 'CCPA',
-        description: 'California regulation that gives residents new data privacy rights.',
-        status: false,
-        type: 'General'
-    },
-    {
-        name: 'ISO 27701',
-        description: 'ISO 27701 is an extension of ISO 27001 that specifies the requirements for establishing, implementing, maintaining and continually improving a privacy information management system (PIMS).',
-        status: false,
-        type: 'Finance'
-    },
-    {
-        name: 'ISO 27018',
-        description: 'ISO 27018 establishes controls to protect Personally Identifiable Information (PII) in public cloud computing environments.',
-        status: false,
-        type: 'Finance'
-    },
-    {
-        name: 'Microsoft SSPA',
-        description: 'Microsoft SSPA is a mandatory compliance program for Microsoft suppliers working with Personal Data and/or Microsoft Confidential Data.',
-        status: false,
-        type: 'Finance'
-    }
-]
-
-
+import { staticPolicies } from "../data/data";
 
 export default function Policies( { policies }: PolicyProps ) {
     const prepareRealData = ( policies: Policy[]) => {
@@ -82,9 +33,12 @@ export default function Policies( { policies }: PolicyProps ) {
         return allRows;
     }
     
-    
-    const data = prepareRealData(policies).concat(staticPolicies);
+    const data: PolicyLite[] = prepareRealData(policies).concat(staticPolicies);
+
     const [ selectedPolicies, setSelectedPolicies ] = useState<PolicyLite[]>(data);
+    useEffect( () => {}, [selectedPolicies]);
+    const [ openDialog, setOpenDialog ] = useState(false);
+    useEffect( () => {}, [openDialog])
     
     const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
         const checkValue = event.target.checked;
@@ -113,8 +67,6 @@ export default function Policies( { policies }: PolicyProps ) {
         return { value: 'Enable', color: 'error' };
     }
 
-    useEffect( () => {}, [selectedPolicies])
-
     return (
         <div className={styles.grid}>
             <div className={styles.controls}>
@@ -124,17 +76,21 @@ export default function Policies( { policies }: PolicyProps ) {
                         View Devices
                     </Link>
                 </Button>
-                <FormGroup>
+                <FormGroup className={styles.controls}>
+                    Filter:
                     <FormControlLabel control={<Checkbox onChange={handleFilter}/>} label="Enabled" />
                 </FormGroup>
             </div>
                 { selectedPolicies.map((policy, index: number) => {
                     return (
                         <Grid key={index} item xs={4}>
-                            <Card sx={{ minWidth: 275 }}>
+                            <Card className={styles.topBufferSmall} sx={{ minWidth: 275 }}>
                                 <CardContent>
-                                    <Typography variant="h5" component="div">
+                                    <Typography variant="h5">
                                         { policy.name }
+                                    </Typography>
+                                    <Typography className={styles.controls} variant="body1">
+                                        <b>{ policy.type }</b>
                                     </Typography>
                                     <Typography variant="body2">
                                         { policy.description}

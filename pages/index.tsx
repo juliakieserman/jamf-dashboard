@@ -3,7 +3,7 @@ import { getUserAuth  } from './api/auth';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import DeviceDetailed from '../components/DeviceDetailed';
-import { Computer, JamfItem, DeviceProps, DeviceRow } from '../types/types';
+import { Computer, JamfItem, DeviceProps } from '../types/types';
 import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
@@ -49,7 +49,7 @@ function prepareRows( computers: Computer[], softwareUpdates: string[] ) {
                     version: softwareUpdates[0]
                 },
                 firewallEnabled: {
-                    label: computer.security.firewall_enabled ? "Firewall Enabled" : "NOT ENABLED",
+                    label: computer.security.firewall_enabled ? "ENABLED" : "NOT ENABLED",
                     status: computer.security.firewall_enabled ? "success" : "error"
                 },
                 diskEncrypted: {
@@ -81,33 +81,33 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
       setOpen(false);
     };
 
-
     return (
     <Container>
         <h3> Device Details</h3>
         <div className={styles.controls}>
-          <Button className={styles.rightBuffer} onClick={handleClickOpen} variant='contained'> Start an email campaign</Button>
+          <Button className={styles.rightBuffer} onClick={handleClickOpen} variant='contained'> Email Campaign</Button>
+          <Button className={styles.rightBuffer} onClick={handleClickOpen} variant='contained'> Onboard Device</Button>
           <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Notify Account Admins"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-          On clicking send, an email notification will be generated for all selected devices notifying them of required corrective action
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Send</Button>
-          <Button onClick={handleClose} autoFocus>
-            Cancel
-          </Button>
-        </DialogActions>
-        </Dialog>
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+              <DialogTitle id="alert-dialog-title">
+                {"Notify Account Admins"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                On clicking send, an email notification will be generated for all selected devices notifying them of required corrective action
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Send</Button>
+                <Button onClick={handleClose} autoFocus>
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
           <Button variant='contained'>
             <Link href='/policies'> Manage policies </Link>
           </Button>
