@@ -2,7 +2,8 @@ export type Policy = {
     general: {
         id: number,
         name: string,
-        frequency: string
+        frequency: string,
+        enabled: boolean
     },
     scope: {
         all_computers: boolean
@@ -103,4 +104,11 @@ export type DeviceProps = {
 
 export type PolicyProps = {
     policies: Policy[]
+}
+
+export type PolicyLite = {
+    name: string;
+    description: string;
+    status: boolean;
+    type: string;
 }

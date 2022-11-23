@@ -9,113 +9,111 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
-import { Policy, JamfItem, PolicyProps } from "../types/types";
+import { Policy, JamfItem, PolicyProps, PolicyLite } from "../types/types";
 import Link from 'next/link';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 const staticPolicies = [
     {
         name: 'SOC2',
         description: 'AICPA standardized framework to prove a company’s security posture to prospective customers.',
-        status: 'Not Enabled'
+        status: false,
+        type: 'Health'
     },
     {
         name: 'GDPR',
         description: 'European Union (EU) regulation to protect personal data and privacy of its citizens.',
-        status: 'Not Enabled'
+        status: false,
+        type: 'General'
     },
     {
         name: 'HIPPA',
         description: 'United States (US) regulation to secure Protected Health Information (PHI).',
-        status: 'Not Enabled'
+        status: false,
+        type: 'Health'
     },
     {
         name: 'CCPA',
         description: 'California regulation that gives residents new data privacy rights.',
-        status: 'Not Enabled'
+        status: false,
+        type: 'General'
     },
     {
         name: 'ISO 27701',
         description: 'ISO 27701 is an extension of ISO 27001 that specifies the requirements for establishing, implementing, maintaining and continually improving a privacy information management system (PIMS).',
-        status: 'Not Enabled'
+        status: false,
+        type: 'Finance'
     },
     {
         name: 'ISO 27018',
         description: 'ISO 27018 establishes controls to protect Personally Identifiable Information (PII) in public cloud computing environments.',
-        status: 'Not Enabled'
+        status: false,
+        type: 'Finance'
     },
     {
         name: 'Microsoft SSPA',
         description: 'Microsoft SSPA is a mandatory compliance program for Microsoft suppliers working with Personal Data and/or Microsoft Confidential Data.',
-        status: 'Not Enabled'
+        status: false,
+        type: 'Finance'
     }
 ]
 
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  }));
-  
-  const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }));
-  
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
-      },
-    },
-  }));
+
 
 export default function Policies( { policies }: PolicyProps ) {
-    const [ otherPolicies, setOtherPolicies ] = useState(staticPolicies);
-    const handleItemClick = ( index: number ) => {
-        const newOtherPolicies = otherPolicies.map( (item, i) => {
-            const newValue = otherPolicies[ index ].status === "Not Enabled" ? "Enabled" : "Not Enabled";
-            if ( i === index ) {
-                return {...item, status: newValue}
-            }
-            return item;
-        })
-       
-        setOtherPolicies(newOtherPolicies);
+    const prepareRealData = ( policies: Policy[]) => {
+        let allRows = [];
+        for (const index in policies) {
+            const policy = policies[index];
+            const scope = policy.scope.all_computers ? 'All Computers' : 'Limited Scope';
+            allRows.push(
+                {
+                    name: policy.general.name,
+                    description: scope,
+                    status: policy.general.enabled,
+                    type: 'JAMF'
+                }
+            )
+        }
+        return allRows;
+    }
+    
+    
+    const data = prepareRealData(policies).concat(staticPolicies);
+    const [ selectedPolicies, setSelectedPolicies ] = useState<PolicyLite[]>(data);
+    
+    const handleFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const checkValue = event.target.checked;
+        if ( checkValue ) {
+            const enabledOnlyPolices = data.filter(policy => policy.status);
+            setSelectedPolicies(enabledOnlyPolices);
+        } else {
+            setSelectedPolicies(data);
+        }
     };
 
-    const getButtonValue = ( currValue: string ) => {
-        if ( currValue === 'Enabled' ) {
+    function isEnabled(policy: PolicyLite ) {
+        if ( policy.status ) {
+            return (
+                <Chip label="ENABLED" color="success"/>
+            )
+        }
+        return (
+            <Chip label="NOT ENABLED" color="error" />
+        )
+    }
+    const getButtonValue = ( currValue: boolean ) => {
+        if ( currValue ) {
             return { value: 'Disable', color: 'success' };
         }
         return { value: 'Enable', color: 'error' };
     }
 
-    useEffect( () => {}, [otherPolicies])
+    useEffect( () => {}, [selectedPolicies])
 
     return (
         <div className={styles.grid}>
@@ -126,32 +124,11 @@ export default function Policies( { policies }: PolicyProps ) {
                         View Devices
                     </Link>
                 </Button>
+                <FormGroup>
+                    <FormControlLabel control={<Checkbox onChange={handleFilter}/>} label="Enabled" />
+                </FormGroup>
             </div>
-                { policies.map((policy: Policy, index: number) => {
-                    const scope = policy.scope.all_computers ? 'All Computers' : 'Limited Scope';
-                    return (
-                        <Grid key={index} item xs={4}>
-                            <Card sx={{ minWidth: 275 }}>
-                                <CardContent>
-                                    <Typography variant="h5" component="div">
-                                        { policy.general.name }
-                                    </Typography>
-                                    <Typography variant="body2">
-                                    <br />
-                                    <b>Frequency:</b> { policy.general.frequency }
-                                    <br />
-                                    <b>Scope:</b> { scope }
-                                    </Typography>
-                                </CardContent>
-                                <CardActions>
-                                    <Chip color="success" label="Enabled"></Chip>
-                                    <Button> Disable </Button>
-                                </CardActions>
-                            </Card>
-                        </Grid>
-                    );
-                })}
-                { otherPolicies.map((policy: any, index: number) => {
+                { selectedPolicies.map((policy, index: number) => {
                     return (
                         <Grid key={index} item xs={4}>
                             <Card sx={{ minWidth: 275 }}>
@@ -164,8 +141,10 @@ export default function Policies( { policies }: PolicyProps ) {
                                     </Typography>
                                 </CardContent>
                                 <CardActions>
-                                    
-                                    <Button onClick={() => handleItemClick(index)}> {getButtonValue(policy.status).value} </Button>
+                                    <div>
+                                        {isEnabled(policy)}
+                                        <Button> {getButtonValue(policy.status).value} </Button>
+                                    </div>
                                 </CardActions>
                             </Card>
                         </Grid>

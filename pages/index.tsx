@@ -107,7 +107,7 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
             Cancel
           </Button>
         </DialogActions>
-      </Dialog>
+        </Dialog>
           <Button variant='contained'>
             <Link href='/policies'> Manage policies </Link>
           </Button>
