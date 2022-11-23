@@ -8,11 +8,7 @@ import React, { useState, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
 import styles from '../styles/Home.module.css';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import { ActionDialog } from '../components/Dialog';
 
 
 function isSoftwareUpToDate( latestSoftware: string, deviceSoftware: string) {
@@ -60,7 +56,7 @@ function prepareRows( computers: Computer[], softwareUpdates: string[] ) {
                 localAccounts: computer.groups_accounts.local_accounts,
                 applications: computer.software.applications,
                 lastContactTime: computer.general.last_contact_time,
-                isValid 
+                isValid
             }
         )
     }
@@ -87,27 +83,15 @@ export default function Device( { computers, softwareUpdates }: DeviceProps ) {
         <div className={styles.controls}>
           <Button className={styles.rightBuffer} onClick={handleClickOpen} variant='contained'> Email Campaign</Button>
           <Button className={styles.rightBuffer} onClick={handleClickOpen} variant='contained'> Onboard Device</Button>
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-              <DialogTitle id="alert-dialog-title">
-                {"Notify Account Admins"}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                On clicking send, an email notification will be generated for all selected devices notifying them of required corrective action
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose}>Send</Button>
-                <Button onClick={handleClose} autoFocus>
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Dialog>
+          <ActionDialog
+            title="Notify Account Admins"
+            description="On clicking send, an email notification will be generated for all selected devices notifying them of required corrective action"
+            confirmButtonText='Send'
+            cancelButtonText='Cancel'
+            handleClose={handleClose}
+            isOpen={open}
+            />
+          
           <Button variant='contained'>
             <Link href='/policies'> Manage policies </Link>
           </Button>
